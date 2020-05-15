@@ -2,14 +2,16 @@ import React, { Component } from 'react';
 import Header from './Header';
 import Form from './Form';
 import List from './List';
+import axios from 'axios';
 
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      query: '',
-      movies: [],
       count: 0,
+      message: '',
+      movies: [],
+      query: '',
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleAdd = this.handleAdd.bind(this);
@@ -26,16 +28,22 @@ export default class App extends Component {
 
     e.preventDefault();
     const TMDB_API_KEY = process.env.REACT_APP_TMDB_API_KEY;
+    const queryParam = {
+      api_key: TMDB_API_KEY,
+      language: 'ja-JP',
+      query: this.state.query,
+      page: '1',
+      include_adult: 'false',
+    };
 
-    fetch(
-      `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&language=ja-JP&query=${this.state.query}&page=1&include_adult=false`,
-      { mode: 'cors' }
-    )
-      .then((response) => {
-        return response.json();
-      })
-      .then((myJson) => {
-        const cinemas = myJson.results;
+    const url =
+      `https://api.themoviedb.org/3/search/movie?` +
+      new URLSearchParams(queryParam);
+
+    axios
+      .get(url)
+      .then((results) => {
+        const cinemas = results.data.results;
         console.log(cinemas);
         cinemas.forEach((e) => {
           let cinema = {};
@@ -57,6 +65,9 @@ export default class App extends Component {
           this.setState((state) => ({ movies: state.movies.concat(cinema) }));
         });
         this.setState({ count: this.state.movies.length });
+      })
+      .catch(() => {
+        this.setState({ message: '通信に失敗しました。' });
       });
   }
 
@@ -71,6 +82,7 @@ export default class App extends Component {
         />
         <div className='siimple-rule'></div>
         <List movies={this.state.movies} />
+        <b style={{ color: 'red' }}>{this.state.message}</b>
       </div>
     );
   }
