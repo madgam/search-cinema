@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import Header from './Header';
-import Form from './Form';
-import List from './List';
-import axios from 'axios';
+import React, { Component } from "react";
+import Header from "./Header";
+import Form from "./Form";
+import List from "./List";
+import axios from "axios";
 
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       count: 0,
-      message: '',
+      message: "",
       movies: [],
-      query: '',
+      query: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleAdd = this.handleAdd.bind(this);
@@ -30,10 +30,10 @@ export default class App extends Component {
     const TMDB_API_KEY = process.env.REACT_APP_TMDB_API_KEY;
     const queryParam = {
       api_key: TMDB_API_KEY,
-      language: 'ja-JP',
+      language: "ja-JP",
       query: this.state.query,
-      page: '1',
-      include_adult: 'false',
+      page: "1",
+      include_adult: "false",
     };
 
     const url =
@@ -67,22 +67,22 @@ export default class App extends Component {
         this.setState({ count: this.state.movies.length });
       })
       .catch(() => {
-        this.setState({ message: '通信に失敗しました。' });
+        this.setState({ message: "通信に失敗しました。" });
       });
   }
 
   render() {
     return (
-      <div className='siimple-box siimple--bg-dark'>
+      <div className="siimple-box siimple--bg-dark">
         <Header />
         <Form
           onSubmit={this.handleAdd}
           handleChange={this.handleChange}
           count={this.state.count}
         />
-        <div className='siimple-rule'></div>
+        <div className="siimple-rule"></div>
         <List movies={this.state.movies} />
-        <b style={{ color: 'red' }}>{this.state.message}</b>
+        <b style={{ color: "red" }}>{this.state.message}</b>
       </div>
     );
   }
